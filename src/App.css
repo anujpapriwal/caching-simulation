@@ -1,5 +1,14 @@
+@import "~antd/dist/antd.css";
+@import url("https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap");
+
+* {
+  font-family: "Roboto";
+}
+
 .App {
   text-align: center;
+  height: 100vh;
+  overflow: hidden;
 }
 
 .App-logo {
@@ -35,4 +44,36 @@
   to {
     transform: rotate(360deg);
   }
+}
+
+.m-b-8 {
+  margin-bottom: 0.5rem;
+}
+.m-t-8 {
+  margin-top: 0.5rem;
+}
+.m-r-8 {
+  margin-right: 0.5rem;
+}
+.m-l-8 {
+  margin-left: 0.5rem;
+}
+
+.cyan-color {
+  color: #42d4f4;
+}
+.orange-color {
+  color: #f58231;
+}
+.light-green-color {
+  color: #bfef45;
+}
+.navy-color {
+  color: #000075;
+}
+.purple-color {
+  color: #911eb4;
+}
+.pink-color {
+  color: #fabed4;
 }
