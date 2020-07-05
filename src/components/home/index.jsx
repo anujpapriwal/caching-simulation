@@ -159,6 +159,7 @@ class Home extends Component {
     let shiftCount = 0;
 
     do {
+      // TODO: fix edge case of failure on eviction emptying
       const evictedRequestSize = REQUEST_SIZES.find(
         ({ value }) =>
           value === selectedCacheCopy.queue[selectedCacheCopy.queue.length - 1]
