@@ -31,6 +31,10 @@ const getRequestColor = requestCode => {
       return "#911eb4";
     case 6:
       return "#fabed4";
+    case 7:
+      return "#E74C3C";
+    case 8:
+      return "#D2B4DE";
 
     default:
       return "transparent";
@@ -94,40 +98,96 @@ class Home extends Component {
     requestCounts: {},
     cacheDetails: {
       cache_1: {
-        size: 100,
-        available: 100
+        size: 150,
+        available: 150,
+        queue: []
       },
       cache_2: {
-        size: 100,
-        available: 100
+        size: 150,
+        available: 150,
+        queue: []
       },
       cache_3: {
-        size: 100,
-        available: 100
+        size: 150,
+        available: 150,
+        queue: []
       },
       cache_4: {
-        size: 100,
-        available: 100
+        size: 150,
+        available: 150,
+        queue: []
       }
     }
   };
 
-  findSuitableCache = requestSize => {
+  findAllotedCache = requestSize => {
     const { cacheDetails } = this.state;
-    console.log(Object.entries(cacheDetails));
-
     const cacheServer = Object.entries(cacheDetails).find(
       ([cache, { available }]) => available >= requestSize
     );
 
     if (cacheServer) {
       // return cache identifier
-      return cacheServer[0];
+      return {
+        cacheName: cacheServer[0],
+        isEvicted: false,
+        shifts: null
+      };
     } else {
       // start with cache eviction
-      return "cache_1";
-      // this.emptyCache()
+      return this.handleCacheEviction(requestSize);
     }
+  };
+
+  handleCacheEviction = requestSize => {
+    const { cacheDetails } = this.state;
+    let selectedCache = {
+      name: "",
+      difference: 150
+    };
+
+    Object.entries(cacheDetails).forEach(([cacheName, { available }]) => {
+      if (requestSize - available < selectedCache.difference) {
+        selectedCache = {
+          name: cacheName,
+          difference: requestSize - available
+        };
+      }
+    });
+
+    const selectedCacheCopy = { ...cacheDetails[selectedCache.name] };
+    let shiftCount = 0;
+
+    do {
+      const evictedRequestSize = REQUEST_SIZES.find(
+        ({ value }) =>
+          value === selectedCacheCopy.queue[selectedCacheCopy.queue.length - 1]
+      ).size;
+      shiftCount++;
+
+      this.updateRequestMap(
+        selectedCacheCopy.queue[selectedCacheCopy.queue.length - 1],
+        null,
+        true
+      );
+      selectedCacheCopy.queue.pop();
+      selectedCacheCopy.available += evictedRequestSize;
+    } while (selectedCacheCopy.available <= requestSize);
+
+    this.setState(prevState => ({
+      cacheDetails: {
+        ...prevState.cacheDetails,
+        [selectedCache.name]: {
+          ...selectedCacheCopy
+        }
+      }
+    }));
+
+    return {
+      cacheName: selectedCache.name,
+      isEvicted: true,
+      shifts: shiftCount
+    };
   };
 
   // update or set request count if not available
@@ -140,25 +200,58 @@ class Home extends Component {
     }));
   };
 
+  updateCacheQueue = (isEviction, cacheName, requestName, shiftCount) => {
+    const { cacheDetails } = this.state;
+    let newQueue = [...cacheDetails[cacheName].queue];
+
+    if (!isEviction) {
+      const requestIndex = newQueue.findIndex(
+        request => request === requestName
+      );
+
+      if (requestIndex !== -1) {
+        const replacedRequest = newQueue.splice(requestIndex, 1);
+        newQueue.push(replacedRequest);
+      } else {
+        newQueue.push(requestName);
+      }
+    } else {
+      for (let i = 0; i < shiftCount; i++) {
+        newQueue.pop();
+      }
+      newQueue.push(requestName);
+    }
+
+    const cacheDetailsCopy = { ...cacheDetails };
+    cacheDetailsCopy[cacheName].queue = newQueue;
+    this.setState({ cacheDetails: cacheDetailsCopy });
+  };
+
   makeServerRequest = () => {
     const { requestType, requestMap } = this.state;
     const requestSize = REQUEST_SIZES.find(({ value }) => value === requestType)
       .size;
+    const currentCache = requestMap[requestType];
 
     this.setState({ requestingServer: true }, () => {
       if (requestMap[requestType]) {
         this.setState(
           {
-            activeCache: requestMap[requestType],
+            activeCache: currentCache,
             databaseCalled: false
           },
           () => {
             this.updateRequestCount(requestType);
+            this.updateCacheQueue(false, currentCache, requestType);
           }
         );
       } else {
         // finds the request type and returns size from it
-        const requestedCache = this.findSuitableCache(requestSize);
+        const {
+          cacheName: requestedCache,
+          isEvicted,
+          shiftCount
+        } = this.findAllotedCache(requestSize);
 
         // database is called and alloted cache is set and count is updated
         this.setState(
@@ -169,27 +262,40 @@ class Home extends Component {
           },
           () => {
             this.updateRequestCount(requestType);
+            this.updateCacheQueue(
+              isEvicted,
+              requestedCache,
+              requestType,
+              shiftCount
+            );
+
+            // update request map with cache details
+            this.updateRequestMap(requestType, requestedCache);
+
+            // updating cache details with new values
+            this.updateCacheDetails(requestedCache, requestSize);
           }
         );
-
-        // update request map with cache details
-        this.updateRequestMap(requestType, requestedCache);
-
-        // updating cache details with new values
-        this.updateCacheDetails(requestedCache, requestSize);
       }
     });
   };
 
-  updateRequestMap = (requestType, requestedCache) => {
-    this.setState(prevState => ({
-      requestMap: { ...prevState.requestMap, [requestType]: requestedCache }
-    }));
+  updateRequestMap = (requestType, requestedCache, isEvicted) => {
+    const { requestMap } = this.state;
+    let requestMapCopy = { ...requestMap };
+    if (isEvicted) {
+      delete requestMapCopy[requestType];
+    } else {
+      requestMapCopy[requestType] = requestedCache;
+    }
+
+    this.setState({ requestMap: requestMapCopy });
   };
 
   updateCacheDetails = (requestedCache, requestSize) => {
     const { cacheDetails } = this.state;
     const cacheDetailsCopy = { ...cacheDetails };
+
     // updates cache details with new values
     cacheDetailsCopy[requestedCache].available =
       cacheDetailsCopy[requestedCache].available - requestSize;
@@ -199,9 +305,7 @@ class Home extends Component {
     });
   };
 
-  requestSelection = value => {
-    this.setState({ requestType: value });
-  };
+  requestSelection = value => this.setState({ requestType: value });
 
   render() {
     const {
@@ -239,7 +343,7 @@ class Home extends Component {
             disabled={!requestType}
           >
             Request
-          </Button>          
+          </Button>
 
           <TableWrapper>
             <div className="table-container">
@@ -284,7 +388,7 @@ class Home extends Component {
 
         <ArcherContainer
           strokeColor={getRequestColor(requestType)}
-          style={{ top: 100 }}
+          style={{ top: 150 }}
         >
           <Container>
             <div>

@@ -21,12 +21,22 @@ export const REQUEST_SIZES = [
   },
   {
     name: "Request 5",
-    value: 5,    
+    value: 5,
     size: 150
   },
   {
     name: "Request 6",
     value: 6,
     size: 30
+  },
+  {
+    name: "Request 7",
+    value: 7,
+    size: 80
+  },
+  {
+    name: "Request 8",
+    value: 8,
+    size: 120
   }
 ];

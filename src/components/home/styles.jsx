@@ -131,7 +131,7 @@ export const TableWrapper = styled.div`
 
   @media only screen and (max-width: 576px) {
     .table-container {
-      height: 180px;
+      height: 230px;
     }
   }
   @media only screen and (min-width: 577px) and (max-width: 960px) {
@@ -141,7 +141,7 @@ export const TableWrapper = styled.div`
   }
   @media only screen and (min-width: 961px) {
     .table-container {
-      height: 400px;
+      height: 450px;
     }
   }
 `;

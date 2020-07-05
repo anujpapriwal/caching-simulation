@@ -14,7 +14,7 @@
     "react": "^16.13.1",
     "react-archer": "^2.0.2",
     "react-dom": "^16.13.1",
-    "react-scripts": "3.4.1",
+    "react-scripts": "^3.4.1",
     "serve": "^11.3.2",
     "styled-components": "^5.1.1"
   },
