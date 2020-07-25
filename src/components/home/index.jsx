@@ -10,7 +10,8 @@ import {
   Container,
   FlexContainer,
   OptionsContainer,
-  TableWrapper
+  TableWrapper,
+  Label
 } from "./styles";
 import { Select, Button } from "antd";
 import { REQUEST_SIZES } from "../../constants";
@@ -212,7 +213,7 @@ class Home extends Component {
 
       if (requestIndex !== -1) {
         const replacedRequest = newQueue.splice(requestIndex, 1);
-        newQueue.push(replacedRequest);
+        newQueue = [...newQueue, ...replacedRequest];
       } else {
         newQueue.push(requestName);
       }
@@ -401,7 +402,12 @@ class Home extends Component {
                       {
                         targetId: requestingServer ? "server" : "user",
                         targetAnchor: "middle",
-                        sourceAnchor: "bottom"
+                        sourceAnchor: "bottom",
+                        label: (
+                          <Label color={getRequestColor(requestType)}>
+                            User request
+                          </Label>
+                        )
                       }
                     ]}
                   >
@@ -431,7 +437,12 @@ class Home extends Component {
                           databaseCalled
                         ),
                         targetAnchor: "middle",
-                        sourceAnchor: "bottom"
+                        sourceAnchor: "bottom",
+                        label: (
+                          <Label color={getRequestColor(requestType)}>
+                            Server request
+                          </Label>
+                        )
                       }
                     ]}
                   >
@@ -461,12 +472,25 @@ class Home extends Component {
                         ),
                         targetAnchor: "middle",
                         sourceAnchor: "bottom",
+                        label: (
+                          <Label
+                            color={
+                              (databaseCalled && allottedCache === "cache_1") ||
+                              activeCache === "cache_1"
+                                ? "#202020"
+                                : "transparent"
+                            }
+                            top
+                          >
+                            Cache response
+                          </Label>
+                        ),
                         style: {
                           strokeDasharray: "5,5",
                           strokeColor:
                             (databaseCalled && allottedCache === "cache_1") ||
                             activeCache === "cache_1"
-                              ? "#bfef45"
+                              ? "#202020"
                               : "transparent"
                         }
                       }
@@ -499,12 +523,25 @@ class Home extends Component {
                         ),
                         targetAnchor: "middle",
                         sourceAnchor: "bottom",
+                        label: (
+                          <Label
+                            color={
+                              (databaseCalled && allottedCache === "cache_2") ||
+                              activeCache === "cache_2"
+                                ? "#202020"
+                                : "transparent"
+                            }
+                            top
+                          >
+                            Cache response
+                          </Label>
+                        ),
                         style: {
                           strokeDasharray: "5,5",
                           strokeColor:
                             (databaseCalled && allottedCache === "cache_2") ||
                             activeCache === "cache_2"
-                              ? "#bfef45"
+                              ? "#202020"
                               : "transparent"
                         }
                       }
@@ -537,12 +574,25 @@ class Home extends Component {
                         ),
                         targetAnchor: "middle",
                         sourceAnchor: "bottom",
+                        label: (
+                          <Label
+                            color={
+                              (databaseCalled && allottedCache === "cache_3") ||
+                              activeCache === "cache_3"
+                                ? "#202020"
+                                : "transparent"
+                            }
+                            top
+                          >
+                            Cache response
+                          </Label>
+                        ),
                         style: {
                           strokeDasharray: "5,5",
                           strokeColor:
                             (databaseCalled && allottedCache === "cache_3") ||
                             activeCache === "cache_3"
-                              ? "#bfef45"
+                              ? "#202020"
                               : "transparent"
                         }
                       }
@@ -575,12 +625,25 @@ class Home extends Component {
                         ),
                         targetAnchor: "middle",
                         sourceAnchor: "bottom",
+                        label: (
+                          <Label
+                            color={
+                              (databaseCalled && allottedCache === "cache_4") ||
+                              activeCache === "cache_4"
+                                ? "#202020"
+                                : "transparent"
+                            }
+                            top
+                          >
+                            Cache response
+                          </Label>
+                        ),
                         style: {
                           strokeDasharray: "5,5",
                           strokeColor:
                             (databaseCalled && allottedCache === "cache_4") ||
                             activeCache === "cache_4"
-                              ? "#bfef45"
+                              ? "#202020"
                               : "transparent"
                         }
                       }
@@ -614,11 +677,23 @@ class Home extends Component {
                         targetId: allottedCache || "database",
                         targetAnchor: "middle",
                         sourceAnchor: "bottom",
+                        label: (
+                          <Label
+                            color={
+                              databaseCalled && allottedCache
+                                ? "#400000"
+                                : "transparent"
+                            }
+                            top
+                          >
+                            Database response
+                          </Label>
+                        ),
                         style: {
                           strokeDasharray: "5,5",
                           strokeColor:
                             databaseCalled && allottedCache
-                              ? "#42d4f4"
+                              ? "#400000"
                               : "transparent"
                         }
                       }
