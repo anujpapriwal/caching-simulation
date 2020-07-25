@@ -60,7 +60,7 @@ export const TableWrapper = styled.div`
     table {
       width: 90%;
       table-layout: fixed;
-      margin: 1rem auto;
+      margin: 0.5rem auto;
       border: none;
       border-collapse: separate;
       border-spacing: 0;
@@ -150,4 +150,39 @@ export const Label = styled.div`
   margin-top: ${props => (props.top ? "-2rem" : "2rem")};
   font-size: 1rem;
   color: ${props => (props.color ? props.color : "#111111")};
+`;
+
+export const LegendContainer = styled.div`
+  display: flex;
+  justify-content: space-around;
+  width: 95%;
+  margin: 0.5rem auto;
+
+  div {
+    display: flex;
+    align-items: center;    
+    padding: 0.25rem;
+    font-weight: 600;
+  }
+
+  @media only screen and (max-width: 576px) {    
+    font-size: 0.5rem;
+
+    div {
+      padding: 0.25rem;
+    }
+  }
+`;
+
+export const LegendCircle = styled.div`
+  min-width: 30px;
+  min-height: 30px;
+  margin-right: 0.25rem;
+  border-radius: 50%;
+  background-color: ${props => props.color ? props.color : "#e8e8e8"};
+
+  @media only screen and (max-width: 576px) {
+    min-width: 20px;
+    min-height: 20px;
+  }
 `;

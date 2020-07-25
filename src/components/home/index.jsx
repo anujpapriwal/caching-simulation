@@ -11,9 +11,11 @@ import {
   FlexContainer,
   OptionsContainer,
   TableWrapper,
-  Label
+  Label,
+  LegendCircle,
+  LegendContainer
 } from "./styles";
-import { Select, Button } from "antd";
+import { Select, Button, Tooltip } from "antd";
 import { REQUEST_SIZES } from "../../constants";
 
 const { Option } = Select;
@@ -23,19 +25,19 @@ const getRequestColor = requestCode => {
     case 1:
       return "#000075";
     case 2:
-      return "#42d4f4";
+      return "#73c2fb";
     case 3:
       return "#f58231";
     case 4:
-      return "#bfef45";
+      return "#0bda51";
     case 5:
       return "#911eb4";
     case 6:
-      return "#fabed4";
+      return "#fe1493";
     case 7:
       return "#E74C3C";
     case 8:
-      return "#D2B4DE";
+      return "#66023c";
 
     default:
       return "transparent";
@@ -45,13 +47,13 @@ const getRequestColor = requestCode => {
 const getCacheColor = (size, available) => {
   const fillPercentage = (size - available) / size;
   if (fillPercentage > 0.75 && fillPercentage <= 1) {
-    return "red";
+    return "#ff2400";
   }
   if (fillPercentage > 0.5 && fillPercentage <= 0.75) {
-    return "yellow";
+    return "#ffdf00";
   }
   if (fillPercentage > 0.25 && fillPercentage <= 0.5) {
-    return "blue";
+    return "#0047ab";
   }
   return "#e8e8e8";
 };
@@ -347,6 +349,24 @@ class Home extends Component {
             Request
           </Button>
 
+          <LegendContainer>
+            <div>
+              <LegendCircle></LegendCircle>&nbsp; &lt;= 25% capacity used
+            </div>
+            <div>
+              <LegendCircle color="#0047ab"></LegendCircle>&nbsp; 25% &lt; capacity
+              used &lt;= 50%
+            </div>
+            <div>
+              <LegendCircle color="#ffdf00"></LegendCircle>&nbsp; 50% &lt;
+              capacity used &lt;= 75%
+            </div>
+            <div>
+              <LegendCircle color="#ff2400"></LegendCircle>&nbsp; 75% &lt; capacity
+              used &lt;= 100%
+            </div>
+          </LegendContainer>
+
           <TableWrapper>
             <div className="table-container">
               <table>
@@ -390,7 +410,7 @@ class Home extends Component {
 
         <ArcherContainer
           strokeColor={getRequestColor(requestType)}
-          style={{ top: 150 }}
+          style={{ top: 200 }}
         >
           <Container>
             <div>
@@ -497,17 +517,19 @@ class Home extends Component {
                     ]}
                   >
                     <div>
-                      <FontAwesomeIcon
-                        icon={faDatabase}
-                        size="3x"
-                        className="cache m-b-8"
-                        style={{
-                          color: getCacheColor(
-                            cacheDetails.cache_1.size,
-                            cacheDetails.cache_1.available
-                          )
-                        }}
-                      />
+                      <Tooltip title="testing">
+                        <FontAwesomeIcon
+                          icon={faDatabase}
+                          size="3x"
+                          className="cache m-b-8"
+                          style={{
+                            color: getCacheColor(
+                              cacheDetails.cache_1.size,
+                              cacheDetails.cache_1.available
+                            )
+                          }}
+                        />
+                      </Tooltip>
                     </div>
                   </ArcherElement>
 
