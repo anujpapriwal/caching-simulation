@@ -145,3 +145,9 @@ export const TableWrapper = styled.div`
     }
   }
 `;
+
+export const Label = styled.div`
+  margin-top: ${props => (props.top ? "-2rem" : "2rem")};
+  font-size: 1rem;
+  color: ${props => (props.color ? props.color : "#111111")};
+`;
